@@ -1,14 +1,11 @@
-import { Rol } from "../roles/rol.enum";
+import { User } from "src/schemas/user.entity";
 import { UserDTO } from "./user.DTO";
 
 export class RespuestaDTO {
     success: boolean;
     message: string;
-    createdUser?: {
-        user: string,
-        email: string,
-        rol: Rol
-    };
+    userFound?: UserDTO;
+    createdUser?: UserDTO;    
     updatedUser?: UserDTO;
     error?: string;
 }

@@ -3,6 +3,7 @@ import { Rol } from "../roles/rol.enum";
 import { NoWhitespace } from "../../../utils/decorators/noWithespace.decorator";
 export class UserDTO {
     @IsEmail()
+    @MinLength(5)
     email?: string;
 
     @IsString()

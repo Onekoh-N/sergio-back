@@ -45,11 +45,40 @@ export class UsersService {
         return this.usersRepository.find();
     }
     //Buscar un usuario
-    findOne(id: number): Promise<User | null> {
+    async findOne(id: number): Promise<RespuestaDTO> {
         try {
-            return this.usersRepository.findOneBy({ id });
+            const user = await this.usersRepository.findOneBy({ id });
+            const respuesta: RespuestaDTO = {
+                success: true,
+                message: 'Usuario encontrado',
+                userFound: user
+            }
+            return respuesta;
         } catch (error) {
-            return null;
+            const respuesta = {
+                success: false,
+                message: 'Error al buscar el usuario',
+                error: error.message
+            }
+            return respuesta;
+        }
+    }
+    async findOneByEmail(email: string): Promise<RespuestaDTO> {
+        try {
+            const user = await this.usersRepository.findOneBy({ email });
+            const respuesta: RespuestaDTO = {
+                success: true,
+                message: 'Usuario encontrado',
+                userFound: user
+            }
+            return respuesta;
+        } catch (error) {
+            const respuesta = {
+                success: false,
+                message: 'Error al buscar el usuario',
+                error: error.message
+            }
+            return respuesta;
         }
     }
     //Editar usuario

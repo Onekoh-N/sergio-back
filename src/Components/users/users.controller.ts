@@ -30,15 +30,8 @@ export class UsersController {
     // Buscar un usuario
     @Get('user/:id')
     async findOne(@Res() res, @Param("id") id: number) {
-        console.log(id)
-        const user: User = await this._usersService.findOne(id);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'Usuario no encontrado'                
-            })
-        }
-        return res.status(200).json(user);
+        const respuesta: RespuestaDTO = await this._usersService.findOne(id);        
+        return res.status(404).json(respuesta)        
     }
 
     // Editar usuario
