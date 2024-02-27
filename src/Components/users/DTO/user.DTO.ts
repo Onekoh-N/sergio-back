@@ -8,11 +8,6 @@ export class UserDTO {
 
     @IsString()
     @MinLength(3)
-    @Validate(NoWhitespace, { message: 'El usuario no puede contener espacios en blanco' })
-    username?: string;
-
-    @IsString()
-    @MinLength(3)
     @Validate(NoWhitespace, { message: 'La contraseña no puede contener espacios en blanco' })
     password?: string;
 

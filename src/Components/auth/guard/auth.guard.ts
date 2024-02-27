@@ -8,10 +8,9 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();        //Obtiene la peticion      
       const token = this.extractTokenFromHeader(request);         //Obtiene el token
       if(!token){throw new UnauthorizedException("Debe Estar logueado para realizar esta accion");}  //Si no hay token lanza una excepcion
-      try {      
-      const payload = await this._jwtService.verifyAsync(token);  //Verifica el token      
-      request.user = payload;                          //Guarda el "payload" en la peticion con el nombre "user"      
-      
+      try {
+      const payload = await this._jwtService.verifyAsync(token);  //Verifica el token
+      request.user = payload;                          //Guarda el "payload" en la peticion con el nombre "user"
     } catch {
       throw new UnauthorizedException("No tiene permiso para realizar esta accion");
     }

@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './Components/users/users.module';
 import { CursosModule } from './Components/cursos/cursos.module';
 import { User } from './schemas/user.entity';
+import { AuthModule } from './Components/auth/auth.module';
 
 
 @Module({
@@ -25,6 +26,7 @@ import { User } from './schemas/user.entity';
     synchronize: true,
   }),
     UsersModule,
+    AuthModule,
     CursosModule
   ],
   controllers: [AppController],

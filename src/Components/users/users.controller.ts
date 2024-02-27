@@ -4,6 +4,8 @@ import { User } from 'src/schemas/user.entity';
 import { UserDTO } from './DTO/user.DTO';
 import { RespuestaDTO } from './DTO/respuesta.DTO';
 import { UserUpdateDTO } from './DTO/userUpdate.DTO';
+import { Auth } from '../../utils/decorators/auth.decorator';
+import { Rol } from './roles/rol.enum'; 
 
 @Controller()
 export class UsersController {
@@ -12,6 +14,7 @@ export class UsersController {
 
     // Crear usuario
     @Post('user')
+    @Auth(Rol.ADMIN)
     async create(@Res() res, @Body() userDTO: UserDTO) {
         const respuesta: RespuestaDTO = await this._usersService.create(userDTO);
         if(!respuesta.success){
@@ -22,6 +25,7 @@ export class UsersController {
 
     // Listar todos los usuarios
     @Get('users')
+    @Auth(Rol.USER)
     async getAll(@Res() res) {
         const usersList: User[] = await this._usersService.findAll();
         return res.status(200).json(usersList);

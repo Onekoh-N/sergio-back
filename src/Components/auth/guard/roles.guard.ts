@@ -4,7 +4,7 @@
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Rol } from '../../Components/users/roles/rol.enum';
+import { Rol } from '../../users/roles/rol.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate { 
@@ -12,12 +12,11 @@ export class RolesGuard implements CanActivate {
   
 
   canActivate(context: ExecutionContext): boolean{                     // Método que se llama automáticamente para determinar si un usuario tiene permiso para acceder a una ruta.       
-      const rolDecorador = this._reflector.getAllAndOverride<Rol>("roles", [  // Obtiene el rol especificado en el decorador del controlador o método.
+      const rolDecorador = this._reflector.getAllAndOverride<Rol>(process.env.ROLES_KEY, [  // Obtiene el rol especificado en el decorador del controlador o método.
       context.getHandler(),
       context.getClass(),
     ])
     if(!rolDecorador){                                                  // Si no se especifica un rol en el decorador, se permite el acceso por defecto.
-      
       return true;
     }
     const {user} = context.switchToHttp().getRequest();                   //Obtiene el usuario de la peticion

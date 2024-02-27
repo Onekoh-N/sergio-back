@@ -25,7 +25,6 @@ export class UsersService {
                 success: true,
                 message: 'Usuario creado exitosamente',
                 createdUser: {
-                    'user': newUser.username,
                     'email': newUser.email,
                     'rol': newUser.rol
                 }
@@ -44,7 +43,7 @@ export class UsersService {
     findAll(): Promise<User[]> {
         return this.usersRepository.find();
     }
-    //Buscar un usuario
+    //Buscar Por ID
     async findOne(id: number): Promise<RespuestaDTO> {
         try {
             const user = await this.usersRepository.findOneBy({ id });
@@ -63,6 +62,7 @@ export class UsersService {
             return respuesta;
         }
     }
+    //Buscar Por Email
     async findOneByEmail(email: string): Promise<RespuestaDTO> {
         try {
             const user = await this.usersRepository.findOneBy({ email });
