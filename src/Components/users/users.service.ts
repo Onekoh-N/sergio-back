@@ -6,7 +6,8 @@ import { Repository } from 'typeorm';
 import { encriptString } from '../../utils/encript';
 import { User } from 'src/schemas/user.entity';
 import { UserDTO } from './DTO/user.DTO';
-import { RespuestaDTO } from './DTO/respuesta.DTO';
+import { UserResDTO } from './DTO/UserRes.DTO';
+import { ResModel } from 'src/utils/model/res.mode';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,7 @@ export class UsersService {
     ) { }
 
     //Crear usuario
-    async create(user: UserDTO): Promise<RespuestaDTO> {
+    async create(user: UserDTO): Promise<UserResDTO> {
         try {
             user.password = await encriptString(user.password);
             const newUser = await this.usersRepository.save(user);
@@ -25,6 +26,7 @@ export class UsersService {
                 success: true,
                 message: 'Usuario creado exitosamente',
                 createdUser: {
+                    'id': newUser.id,
                     'email': newUser.email,
                     'rol': newUser.rol
                 }
@@ -39,15 +41,17 @@ export class UsersService {
             return respuesta;
         }
     }
+
     //Listar todos los usuarios
     findAll(): Promise<User[]> {
         return this.usersRepository.find();
     }
+
     //Buscar Por ID
-    async findOne(id: number): Promise<RespuestaDTO> {
+    async findOne(id: number): Promise<UserResDTO> {
         try {
             const user = await this.usersRepository.findOneBy({ id });
-            const respuesta: RespuestaDTO = {
+            const respuesta: UserResDTO = {
                 success: true,
                 message: 'Usuario encontrado',
                 userFound: user
@@ -62,41 +66,45 @@ export class UsersService {
             return respuesta;
         }
     }
+
     //Buscar Por Email
-    async findOneByEmail(email: string): Promise<RespuestaDTO> {
+    async findOneByEmail(email: string): Promise<ResModel> {
         try {
             const user = await this.usersRepository.findOneBy({ email });
-            const respuesta: RespuestaDTO = {
+            if (!user) throw new Error('Usuario no encontrado');
+            
+            const res: ResModel = {
                 success: true,
                 message: 'Usuario encontrado',
-                userFound: user
+                data: user
             }
-            return respuesta;
+            return res;
         } catch (error) {
-            const respuesta = {
+            const res : ResModel = {
                 success: false,
                 message: 'Error al buscar el usuario',
                 error: error.message
             }
-            return respuesta;
+            return res;
         }
     }
+
     //Editar usuario
-    async edit(id: number, user: UserDTO): Promise<RespuestaDTO> {
+    async edit(id: number, user: UserDTO): Promise<UserResDTO> {
         try {
             await this.usersRepository.update(id, user);
             const userUpdated = await this.usersRepository.findOneBy({ id });
             if (!userUpdated) {
                 throw new Error('Usuario no encontrado');
             }
-            const respuesta: RespuestaDTO = {
+            const respuesta: UserResDTO = {
                 success: true,
                 message: 'Usuario actualizado exitosamente',
                 updatedUser: user
             }
             return respuesta;
         } catch (error) {
-            const respuesta: RespuestaDTO = {
+            const respuesta: UserResDTO = {
                 success: false,
                 message: 'Error al actualizar el usuario',
                 error: error.message
@@ -106,23 +114,22 @@ export class UsersService {
     }
 
     //Eliminar usuario
-    async remove(id: number): Promise<RespuestaDTO> {
-
-        const deletedUser = await this.usersRepository.delete(id);
-        console.log(deletedUser);
-
-        if (deletedUser.affected === 0) {
-            const respuesta: RespuestaDTO = {
-                success: false,
-                message: 'Usuario eliminado exitosamente',
-                error: 'Usuario no encontrado'
+    async remove(id: number): Promise<ResModel> {
+        try {
+            const deletedUser = await this.usersRepository.delete(id);
+            if(!deletedUser.affected) throw new Error('Usuario no encontrado');            
+            const res: ResModel = {
+                success: true,
+                message: 'Usuario eliminado exitosamente'
             }
-            return respuesta;
+            return res;
+        } catch (error) {
+            const res: ResModel = {
+                success: false,
+                message: 'Error al eliminar el usuario',
+                error: error.message                
+            }
+            return res;
         }
-        const respuesta: RespuestaDTO = {
-            success: true,
-            message: 'Usuario eliminado exitosamente'
-        }
-        return respuesta;
     }
 }

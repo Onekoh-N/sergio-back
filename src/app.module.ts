@@ -5,9 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
 import { UsersModule } from './Components/users/users.module';
-import { CursosModule } from './Components/cursos/cursos.module';
 import { User } from './schemas/user.entity';
 import { AuthModule } from './Components/auth/auth.module';
+import { Materia } from './schemas/materia.entity';
+import { MateriaModule } from './components/materia/materia.module';
+import { UnidadModule } from './components/unidad/unidad.module';
+import { Unidad } from './schemas/unidad.entity';
 
 
 @Module({
@@ -22,12 +25,14 @@ import { AuthModule } from './Components/auth/auth.module';
     username: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DB,
-    entities: [User],
+    entities: [User, Materia, Unidad],
     synchronize: true,
+    autoLoadEntities: true
   }),
     UsersModule,
     AuthModule,
-    CursosModule
+    MateriaModule,
+    UnidadModule
   ],
   controllers: [AppController],
   providers: [AppService],

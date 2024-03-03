@@ -12,7 +12,7 @@ export class RolesGuard implements CanActivate {
   
 
   canActivate(context: ExecutionContext): boolean{                     // Método que se llama automáticamente para determinar si un usuario tiene permiso para acceder a una ruta.       
-      const rolDecorador = this._reflector.getAllAndOverride<Rol>("roles", [  // Obtiene el rol especificado en el decorador del controlador o método.
+      const rolDecorador = this._reflector.getAllAndOverride<Rol[]>("roles", [  // Obtiene el rol especificado en el decorador del controlador o método.
       context.getHandler(),
       context.getClass(),
     ])
@@ -22,7 +22,7 @@ export class RolesGuard implements CanActivate {
     }
     const {user} = context.switchToHttp().getRequest();                   //Obtiene el usuario de la peticion
     const rolUsuario = user.rol;
-    if(rolDecorador === rolUsuario) {
+    if(rolDecorador.includes(rolUsuario)) {
       return true
     }else{
       throw new UnauthorizedException('No tiene permiso para acceder a esta ruta');

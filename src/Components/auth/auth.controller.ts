@@ -2,7 +2,8 @@ import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Req, Res 
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
 import { UserDTO } from '../users/DTO/user.DTO';
-import { RespuestaDTO } from '../users/DTO/respuesta.DTO';
+import { UserResDTO } from '../users/DTO/UserRes.DTO';
+import { ResModel } from 'src/utils/model/res.mode';
 
 @Controller('auth')
 export class AuthController {
@@ -10,18 +11,18 @@ export class AuthController {
 
     //Login
     @Post('login')
-    async login(@Body() registerDTO: LoginDTO, @Res() res): Promise<RespuestaDTO> {
-        const loginResp = await this._authService.login(registerDTO);
+    async login(@Body() registerDTO: LoginDTO, @Res() res): Promise<ResModel> {
+        const loginResp: ResModel = await this._authService.login(registerDTO);
         if(!loginResp.success){
             return res.status(HttpStatus.UNAUTHORIZED).json(loginResp);
         }
         return res.status(HttpStatus.OK).json(loginResp);      
     }
 
- 
+
     //Register
     @Post('register')
-    async register(@Res() res, @Body() registerDTO: UserDTO): Promise<RespuestaDTO> {
+    async register(@Res() res, @Body() registerDTO: UserDTO): Promise<UserResDTO> {
         
             const authResp = await this._authService.register(registerDTO);
             if(!authResp.success){

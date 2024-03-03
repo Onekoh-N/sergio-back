@@ -3,11 +3,12 @@ import { UsersService } from '../users/users.service';
 import { LoginDTO } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthResDTO } from './dto/authRes.dto';
-import { RespuestaDTO } from '../users/DTO/respuesta.DTO';
+import { UserResDTO } from '../users/DTO/UserRes.DTO';
 import { UserDTO } from '../users/DTO/user.DTO';
 import { compare} from 'bcryptjs';
 
 import { ConfigService } from '@nestjs/config';
+import { ResModel } from 'src/utils/model/res.mode';
 
 @Injectable()
 export class AuthService {
@@ -18,45 +19,41 @@ export class AuthService {
     ) { }
 
         //Login
-    async login(login: LoginDTO): Promise<AuthResDTO> {
-        let res: AuthResDTO;   
-        const srchUser: RespuestaDTO = await this._usersService.findOneByEmail(login.email);
-        if (!srchUser.success || !srchUser.userFound) {
-            srchUser.message = 'Credenciales incorrectas';
-            res = srchUser;
-            throw new UnauthorizedException(res);
-        }
-        const usuarioEncontrado = srchUser.userFound;
-        const validarPassword = await compare(login.password, usuarioEncontrado.password);
-        if (!validarPassword) {
-            res = {
-                success: false,
-                message: 'Credenciales incorrectas'
-            }
-            throw new UnauthorizedException(res);
-        }
-        const payload = {
-            email: usuarioEncontrado.email,
-            rol: usuarioEncontrado.rol
-        };
-        
-        const token = await this._jwtService.sign(payload);
-        res = {
-            success: true,
-            message: 'Login exitoso',
-            token: token,
-            userData: {
+    async login(login: LoginDTO): Promise<ResModel> {  
+        try {
+            const srchUser: ResModel = await this._usersService.findOneByEmail(login.email);            
+            if(!srchUser.success) throw new UnauthorizedException(srchUser);                 
+            const usuarioEncontrado = srchUser.data;
+            const validarPassword = await compare(login.password, usuarioEncontrado.password);
+            if (!validarPassword) throw new UnauthorizedException('Credenciales incorrectas');
+            const payload = {
                 email: usuarioEncontrado.email,
                 rol: usuarioEncontrado.rol
+            };            
+            const token = await this._jwtService.sign(payload);
+            const res: ResModel = {
+                success: true,
+                message: 'Login exitoso',
+                data: {token: token,
+                    userData: {
+                        email: usuarioEncontrado.email,
+                        rol: usuarioEncontrado.rol
+                    }}
             }
+            return res;
+        } catch (error) {
+            const res: ResModel = {
+                success: false,
+                message: 'Credenciales incorrectas',
+            }
+            return res;
         }
-        return res;
 
     }
 
         //Register
     async register(user: UserDTO) {
-        const respuesta: RespuestaDTO = await this._usersService.create(user);
+        const respuesta: UserResDTO = await this._usersService.create(user);
         return respuesta;
     }
 

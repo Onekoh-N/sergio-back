@@ -1,7 +1,12 @@
-import { IsBoolean, IsDate, IsEmail, IsEnum, IsOptional, IsString, MinLength, Validate } from "class-validator";
+import { IsBoolean, IsDate, IsEmail, IsEnum, IsNumber, IsOptional, IsString, MinLength, Validate } from "class-validator";
 import { Rol } from "../roles/rol.enum";
 import { NoWhitespace } from "../../../utils/decorators/noWithespace.decorator";
+import { Materia } from "src/schemas/materia.entity";
 export class UserDTO {
+    @IsNumber()    
+    @IsOptional()
+    id?: number;
+
     @IsEmail()
     @MinLength(5)
     email?: string;
@@ -31,6 +36,9 @@ export class UserDTO {
     @IsEnum(Rol)
     @IsOptional()
     rol?: Rol;
+
+    @IsOptional()    
+    materias?: Materia[];
 
     @IsDate()
     @IsOptional()

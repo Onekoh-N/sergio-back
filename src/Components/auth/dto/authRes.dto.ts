@@ -1,6 +1,6 @@
-import { RespuestaDTO } from "src/Components/users/DTO/respuesta.DTO";
+import { UserResDTO } from "src/Components/users/DTO/UserRes.DTO";
 
-export class AuthResDTO  extends RespuestaDTO{
+export class AuthResDTO  extends UserResDTO{
     token?: string;
     userData?: {
         email: string;

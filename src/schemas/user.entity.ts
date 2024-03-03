@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Rol } from '../Components/users/roles/rol.enum';
+import { Materia } from './materia.entity';
 
 @Entity()
 export class User {
@@ -27,7 +28,7 @@ export class User {
     @Column({
         type: 'enum',
         enum: Rol,
-        default: Rol.USER
+        default: Rol.ALUM
     })
     rol: Rol;
 
@@ -40,4 +41,6 @@ export class User {
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     fechaExpiracion: Date;
 
+    @OneToMany(() => Materia, materia => materia.profesor) // Definiendo relación con las materias que imparte
+    materias: Materia[];
 }
